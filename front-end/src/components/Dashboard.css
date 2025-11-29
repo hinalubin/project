@@ -1,0 +1,197 @@
+/* ================ GLOBAL LAYOUT ================ */
+.container {
+  display: flex;
+  height: 100vh;
+  background: #f5f7fb;
+  font-family: "Inter", sans-serif;
+}
+
+/* ================ SIDEBAR ================ */
+.sidebar {
+  width: 260px;
+  background: #ffffff;
+  padding: 25px 20px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.logo-icon {
+  background: #4e8df5;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-item {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  gap: 12px;
+  color: #3b3f53;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.menu-item:hover {
+  background: #eef3ff;
+}
+
+.menu-item.active {
+  background: #e4edff;
+  color: #2a65f7;
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+/* ================ MAIN AREA ================ */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* ================ TOP CARDS ================ */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 28px;
+  margin: 0;
+  color: #2a65f7;
+}
+
+.card p {
+  margin-top: 5px;
+  color: #555;
+}
+
+/* ================ ROW LAYOUT ================ */
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+/* ================ BOXES ================ */
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.box h3 {
+  margin-bottom: 15px;
+}
+
+/* ================ BOOKINGS TABLE ================ */
+.table-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table-box th,
+.table-box td {
+  padding: 10px;
+  border-bottom: 1px solid #ececec;
+}
+
+.table-box th {
+  background: #f4f6fa;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* ================ PICKUP ================ */
+.pickup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pickup-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 10px;
+  margin-bottom: 8px;
+  background: #f7f9ff;
+  border-radius: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #4e8df5;
+  border-radius: 50%;
+}
+
+/* ================ COMPLAINTS ================ */
+.complaint-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.c-card {
+  background: #eef3ff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.c-card h4 {
+  font-size: 24px;
+  margin: 0;
+  color: #2a65f7;
+}
+
+.c-card p {
+  margin-top: 5px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* ================ CHART BOX ================ */
+.chart-img {
+  width: 100%;
+  border-radius: 12px;
+}
