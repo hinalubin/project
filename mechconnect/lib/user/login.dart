@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mechconnect/mechanic/register.dart';
 import 'package:mechconnect/pickup/register.dart';
 import 'package:mechconnect/service/register.dart';
+import 'package:mechconnect/user/home.dart';
 import 'package:mechconnect/user/register.dart';
 
 class Login extends StatefulWidget {
@@ -17,6 +18,32 @@ class _LoginState extends State<Login> {
   TextEditingController password = TextEditingController();
 
   final formkey = GlobalKey<FormState>();
+
+
+
+   Future<void>login_api(context)async{
+    try {
+      final response=await dio.post(
+        '$baseurl/api/login',
+        data:{
+          
+          'password':password.text,
+          'email':Username.text,
+          
+        },
+      );
+
+      if(response.statusCode==200||response.statusCode==201){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(),),);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("login successful")),);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("login failed")),);
+      }
+    } catch (e) {
+      print(e);
+      
+    }
+  }
 
   bool visible = true;
   void show() {
@@ -175,7 +202,9 @@ class _LoginState extends State<Login> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  if (formkey.currentState!.validate()) {}
+                  if (formkey.currentState!.validate()) {
+                    login_api(context);
+                  }
                 },
                 child: Text(
                   "Login",

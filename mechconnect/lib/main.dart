@@ -5,6 +5,7 @@ import 'package:mechconnect/pickup/home.dart';
 import 'package:mechconnect/pickup/register.dart';
 import 'package:mechconnect/service/home.dart';
 import 'package:mechconnect/service/register.dart';
+import 'package:mechconnect/user/history.dart';
 
 import 'package:mechconnect/user/home.dart';
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Registermechanic(),
+      home: History(),
       debugShowCheckedModeBanner: false,
     );
   }

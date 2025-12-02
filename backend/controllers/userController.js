@@ -1,8 +1,11 @@
-import Login from "../models/loginModel.js";
-import UserData from "../models/userModel.js";
+import Login from "../models/login.js";
+import UserData from "../models/user.js";
 import bcrypt from "bcrypt";
-import Booking from "../models/bookigModel.js"
+// import Booking from "../models/bookig.js"
 export const userReg = async (req, res) => {
+  console.log('hittttttttttttttt');
+
+  
   console.log(req.body);
 
   try {
@@ -16,6 +19,7 @@ export const userReg = async (req, res) => {
     // if (!location.lat || !location.lng) {
     //   return res.status(400).json({ message: "Location lat & lng are required" });
     // }
+
 
     const existingUser = await Login.findOne({ userName: email });
     if (existingUser) {

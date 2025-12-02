@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/user/login.dart';
 
 
@@ -21,6 +22,30 @@ class _RegisterState extends State<Register> {
   final formkey = GlobalKey<FormState>();
   bool visible = true;
   bool visible1= true;
+  Future<void>post_reg(context)async{
+    try {
+      final response=await dio.post(
+        '$baseurl/api/user/register',
+        data:{
+          
+          'password':Password.text,
+          'name':Name.text,
+          'phone':Contact.text,
+          'email':Email.text,
+        },
+      );
+
+      if(response.statusCode==200||response.statusCode==201){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login(),),);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration successful")),);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration failed")),);
+      }
+    } catch (e) {
+      print(e);
+      
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +176,8 @@ class _RegisterState extends State<Register> {
               ElevatedButton(
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()),
-                    );
+                    post_reg(context);
+                  
                   }
                 },
                 style: ElevatedButton.styleFrom(

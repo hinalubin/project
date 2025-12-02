@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mechconnect/user/login.dart';
@@ -10,6 +11,9 @@ class Registerservice extends StatefulWidget {
   @override
   State<Registerservice> createState() => _RegisterserviceState();
 }
+final baseurl='http://192.168.1.148:5000';
+Dio dio=Dio();
+
 
 class _RegisterserviceState extends State<Registerservice> {
   TextEditingController Name = TextEditingController();
