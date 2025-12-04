@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/user/login.dart';
 
 class Registerpickup extends StatefulWidget {
@@ -22,6 +25,7 @@ class _RegisterpickupState extends State<Registerpickup> {
   TextEditingController vehicle = TextEditingController();
   TextEditingController img = TextEditingController(text: 'Upload permit');
 
+  double? userLat,userLong;
   final formkey = GlobalKey<FormState>();
   bool visible = true;
   bool visible1 = true;
@@ -39,6 +43,88 @@ class _RegisterpickupState extends State<Registerpickup> {
         img.text = pickedfile.name;
       });
     }
+  }
+  Future<void> postReg(context) async {
+    try {
+      final formData = FormData.fromMap({
+        'password': Password.text,
+        'name': Name.text,
+        'phone': Contact.text,
+        'email': Email.text,
+        'vehicleNumber':vehicle.text,
+        'location': {'lat': userLat.toString(), 'lng': userLong.toString()},
+        'img': await MultipartFile.fromFile(
+          image!.path,
+          filename: image!.path.split('/').last,
+        ),
+      });
+
+      final response = await dio.post(
+        "$baseurl/api/pickup/register",
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Successful")));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Failed")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("Location services are OFF");
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error("Location permissions denied");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("Location permissions permanently denied");
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      userLat = position.latitude;
+      userLong = position.longitude;
+    });
+
+    print("📍 Latitude: $userLat, Longitude: $userLong");
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentLocation();
+
   }
 
   @override
@@ -223,10 +309,7 @@ class _RegisterpickupState extends State<Registerpickup> {
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
                     if (image != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
+                      postReg(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("upload your permit")),

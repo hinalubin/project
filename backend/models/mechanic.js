@@ -1,14 +1,11 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const mechanicschema = new Schema({
     mechanicName: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
     Experience:{type:String,required:true},
-    Location: {
-        lat: { type: Number, required: true },
-        long: { type: Number, required: true },
-    },
+    
     certificateimg: { type: String,required:true },
     commonKey: {
         type: Schema.Types.ObjectId,
@@ -17,5 +14,5 @@ const mechanicschema = new Schema({
 
 
 });
-const Mechanic = mongoose.model("Pickup", mechanicschema);
+const Mechanic = mongoose.model("Mechanic", mechanicschema);
 export default Mechanic;

@@ -1,12 +1,16 @@
-import ServiceCenter from "../models/serviceCenterModel.js";
-import Login from "../models/loginModel.js";
+// import ServiceCenter from "../models/serviceCenterModel.js";
+// import Login from "../models/loginModel.js";
 import bcrypt from "bcrypt";
+import Servicecenter from "../models/servicecenter.js";
+import Login from "../models/login.js";
 
 export const registerServiceCenter = async (req, res) => {
   try {
-    const { centerName, ownerName, phone, email, password, location } = req.body;
+    console.log(req.body);
+    
+    const { centerName, phone, email, password, location } = req.body;
 
-    if (!centerName || !ownerName || !phone || !email || !password || !location) {
+    if (!centerName  || !phone || !email || !password || !location) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -23,16 +27,15 @@ export const registerServiceCenter = async (req, res) => {
       role: "service_center"
     });
 
-    const serviceCenter = await ServiceCenter.create({
+    const serviceCenter = await Servicecenter.create({
       centerName,
-      ownerName,
       phone,
       email,
-      location: {
+      Location: {
         lat: Number(location.lat),
-        lng: Number(location.lng),
+        long: Number(location.lng),
       },
-      certificateImg: req.file ? req.file.path : null,
+      certificateimg: req.file ? req.file.path : null,
       commonKey: login._id,
     });
 

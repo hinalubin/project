@@ -1,7 +1,8 @@
-import 'dart:io';
 
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mechconnect/user/login.dart';
 
@@ -11,7 +12,7 @@ class Registerservice extends StatefulWidget {
   @override
   State<Registerservice> createState() => _RegisterserviceState();
 }
-final baseurl='http://192.168.1.148:5000';
+final baseurl='http://192.168.1.79:5000';
 Dio dio=Dio();
 
 
@@ -26,7 +27,8 @@ class _RegisterserviceState extends State<Registerservice> {
   TextEditingController img = TextEditingController(
     text: 'upload your certificate',
   );
-
+  
+  double? userLat,userLong;
   final formkey = GlobalKey<FormState>();
   bool visible = true;
   bool visible1 = true;
@@ -43,6 +45,88 @@ class _RegisterserviceState extends State<Registerservice> {
         img.text = pickedfile.name;
       });
     }
+  }
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("Location services are OFF");
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error("Location permissions denied");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("Location permissions permanently denied");
+    }
+ 
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      userLat = position.latitude;
+      userLong = position.longitude;
+    });
+
+    print("📍 Latitude: $userLat, Longitude: $userLong");
+  }
+ Future<void> postReg(context) async {
+    try {
+      final formData = FormData.fromMap({
+        'password': Password.text,
+        'centerName': Name.text,
+        'phone': Contact.text,
+        'email': Email.text,
+        'location': {'lat': userLat.toString(), 'lng': userLong.toString()},
+        'certificateImg': await MultipartFile.fromFile(
+          image!.path,
+          filename: image!.path.split('/').last,
+        ),
+      });
+
+      final response = await dio.post(
+        "$baseurl/api/service/register",
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Successful")));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Failed")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+  
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentLocation();
   }
 
   @override
@@ -210,10 +294,8 @@ class _RegisterserviceState extends State<Registerservice> {
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
                     if (image != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
+                      postReg(context);
+                      
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("upload your certificate")),
@@ -223,7 +305,7 @@ class _RegisterserviceState extends State<Registerservice> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  minimumSize: Size(200, 50),
+                
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

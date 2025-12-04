@@ -18,4 +18,4 @@ const pickupSchema = new Schema({
 
 });
 const pickup = mongoose.model("Pickup", pickupSchema);
-export default Pickup;
+export default pickup;

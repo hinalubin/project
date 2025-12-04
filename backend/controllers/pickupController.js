@@ -1,6 +1,6 @@
-import Pickup from "../models/pickupModel.js";
-import Login from "../models/loginModel.js";
 import bcrypt from "bcrypt";
+import pickup from "../models/pickup.js";
+import Login from "../models/login.js";
 
 export const registerPickupPartner = async (req, res) => {
   console.log(req.body);
@@ -26,16 +26,16 @@ export const registerPickupPartner = async (req, res) => {
       role: "pickup_partner",
     });
 
-    const partner = await Pickup.create({
-      name,
+    const partner = await pickup.create({
+      pickupname:name,
       phone,
       email,
-      vehicleNumber,
-      location: {
+      vehicleno:vehicleNumber,
+      Location: {
         lat: Number(location.lat),
-        lng: Number(location.lng),
+        long: Number(location.lng),
       },
-      certificateImg: req.file ? req.file.path : null,
+      certificateimg: req.file ? req.file.path : null,
       commonKey: login._id,
     });
 

@@ -9,5 +9,5 @@ const userschema=new Schema({
             ref: "Login",
         },
 });
-const User=mongoose.model("User",userschema);
+const User = mongoose.model("User",userschema);
 export default User;

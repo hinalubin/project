@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/user/login.dart';
 
 class Registermechanic extends StatefulWidget {
@@ -15,6 +18,7 @@ class _RegistermechanicState extends State<Registermechanic> {
   TextEditingController Name = TextEditingController();
 
   TextEditingController Contact = TextEditingController();
+  TextEditingController exp = TextEditingController();
 
   TextEditingController Email = TextEditingController();
   TextEditingController Password = TextEditingController();
@@ -22,7 +26,7 @@ class _RegistermechanicState extends State<Registermechanic> {
   TextEditingController image = TextEditingController(
     text: 'upload your certificate',
   );
-
+  
   final formkey = GlobalKey<FormState>();
   bool visible = true;
   bool visible1 = true;
@@ -38,6 +42,51 @@ class _RegistermechanicState extends State<Registermechanic> {
       });
     }
   }
+  
+  Future<void> postReg(context) async {
+    try {
+      final formData = FormData.fromMap({
+        'password': Password.text,
+        'mechanicName': Name.text,
+        'phone': Contact.text,
+        'email': Email.text,
+        'experience':exp.text,
+        
+        'img': await MultipartFile.fromFile(
+          pickedfile!.path,
+          filename: pickedfile!.path.split('/').last,
+        ),
+      });
+
+      final response = await dio.post(
+        "$baseurl/api/mechanic/register",
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Successful")));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Registration Failed")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +125,24 @@ class _RegistermechanicState extends State<Registermechanic> {
                 },
                 decoration: InputDecoration(
                   label: Text("Contact"),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10,),
+              TextFormField(
+                controller: exp,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Enter your Experience";
+                  }
+                },
+                decoration: InputDecoration(
+                  label: Text("Experience"),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -204,10 +271,7 @@ class _RegistermechanicState extends State<Registermechanic> {
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
                     if (pickedfile != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
+                      postReg(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("upload your certificate")),

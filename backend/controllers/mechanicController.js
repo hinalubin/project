@@ -1,6 +1,6 @@
-import Mechanic from "../models/mechanicModel.js";
-import Login from "../models/loginModel.js";
 import bcrypt from "bcrypt";
+import Mechanic from "../models/mechanic.js";
+import Login from "../models/login.js";
 
 export const registerMechanic = async (req, res) => {
   try {
@@ -27,12 +27,12 @@ export const registerMechanic = async (req, res) => {
       mechanicName,
       phone,
       email,
-      experience,
+      Experience:experience,
     //   location: {
     //     lat: Number(location.lat),
     //     lng: Number(location.lng),
     //   },
-      certificateImg: req.file ? req.file.path : null,
+      certificateimg: req.file ? req.file.path : null,
       commonKey: login._id,
     });
 

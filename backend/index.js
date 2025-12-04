@@ -4,6 +4,9 @@ import cors from "cors"
 import userroute from "./routes/userroute.js"
 
 import authroute from"./routes/authroute.js"
+import serviceroute from "./routes/seviceroute.js"
+import pickuproute from "./routes/pickuproute.js"
+import mechanicroute from "./routes/mechanicroute.js"
 const app = express()
 mongoose.connect("mongodb://localhost:27017/Mechconnect").then(
     () => { console.log("Mongo db connected successfully") }
@@ -16,4 +19,7 @@ app.use(cors({
 app.use(express.json()); 
 app.use('/api/user',userroute)
 app.use('/api/login',authroute)
+app.use('/api/service',serviceroute)
+app.use('/api/pickup',pickuproute)
+app.use('/api/mechanic',mechanicroute)
 app.listen(5000, "0.0.0.0", () => { console.log("server running on port 5000") })
