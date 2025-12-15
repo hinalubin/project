@@ -54,7 +54,7 @@ export const registerServiceCenter = async (req, res) => {
 export const getServiceCenterHome = async (req, res) => {
   try {
     const { loginId } = req.params;
-    const sc = await ServiceCenter.findOne({ commonKey: loginId });
+    const sc = await Servicecenter.findOne({ commonKey: loginId });
 
     if (!sc) return res.status(404).json({ message: "Service center not found" });
 

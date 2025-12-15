@@ -1,58 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:mechconnect/service/register.dart';
+import 'package:mechconnect/user/home.dart';
+import 'package:mechconnect/user/login.dart';
 
-class Viewvehicle extends StatelessWidget {
+class Viewvehicle extends StatefulWidget {
   Viewvehicle({super.key});
-  List<dynamic> vehicles = [
-    {
-      "vehicle number": "KL 57 3431",
-      "Vehicle model": "Royal Enfield Hunter 350",
-      "Vehicle type": "Two wheeler",
-    },
-    {
-      "vehicle number": "KL 57 7856",
-      "Vehicle model": "Benz 90",
-      "Vehicle type": "Four wheeler",
-    },
-  ];
+
+  @override
+  State<Viewvehicle> createState() => _ViewvehicleState();
+}
+
+class _ViewvehicleState extends State<Viewvehicle> {
+  List<dynamic> vehicles = [];
+
+  // Fetch vehicles
+  Future<void> getvehicle(context) async {
+    try {
+      final response = await dio.get("$baseurl/api/vehicle/$userid");
+
+      print("Vehicle API Response: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          vehicles = response.data['data']; // ✅ Correct
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Failed to load vehicles")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getvehicle(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Vehicle details"),
+        title: Text("Vehicle Details"),
         backgroundColor: Colors.lightBlueAccent,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
+      body: vehicles.isEmpty
+          ? Center(child: Text("No vehicles found"))
+          : ListView.builder(
               itemCount: vehicles.length,
               itemBuilder: (context, index) {
+                final vehicle = vehicles[index];
+
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Card(color: const Color.fromARGB(105, 158, 158, 158),
+                  child: Card(
+                    color: const Color.fromARGB(105, 158, 158, 158),
                     child: ListTile(
-                      title: Text(vehicles[index]["vehicle number"]),
+                      title: Text(
+                        "Number: ${vehicle["vehicleNumber"]}",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(vehicles[index]["Vehicle model"]),
-                          Text(vehicles[index]["Vehicle type"]),
+                          SizedBox(height: 4),
+                          Text("Brand: ${vehicle["brand"]}"),
+                          Text("Model: ${vehicle["model"]}"),
+                          Text("Fuel: ${vehicle["fuelType"]}"),
+                          Text("Type: ${vehicle["vehicleType"]}"),
                         ],
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          
+                          // Delete function can be added here
                         },
-                        icon: Icon(Icons.delete,color: Colors.red,),
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),
                 );
               },
             ),
-          ),
-        ],
-      ),
     );
   }
 }

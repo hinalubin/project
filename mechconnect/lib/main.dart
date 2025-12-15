@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mechconnect/service/register.dart';
+import 'package:mechconnect/user/history.dart';
+import 'package:mechconnect/user/home.dart';
 import 'package:mechconnect/user/login.dart';
 
 

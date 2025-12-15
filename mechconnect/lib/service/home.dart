@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mechconnect/service/add.dart';
+import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/service/viewcomplaint.dart';
 import 'package:mechconnect/service/viewfeedback.dart';
 import 'package:mechconnect/service/viewrequest.dart';
@@ -13,11 +14,56 @@ void main() {
 class homeservice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen1());
   }
+}String? serviceid;
+
+
+class HomeScreen1 extends StatefulWidget {
+
+  
+  @override
+  State<HomeScreen1> createState() => _HomeScreen1State();
 }
 
-class HomeScreen extends StatelessWidget {
+class _HomeScreen1State extends State<HomeScreen1> {
+  Future<void> posthome(context) async {
+    try {
+     
+
+      final response = await dio.get(
+        "$baseurl/api/service/home/$loginid",
+        
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+serviceid=response.data['_id'];
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Successful")));
+
+     
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Failed")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    posthome(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

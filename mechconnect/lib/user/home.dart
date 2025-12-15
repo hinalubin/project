@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/user/addvehicle.dart';
 
 import 'package:mechconnect/user/chatbot.dart';
+import 'package:mechconnect/user/login.dart';
 import 'package:mechconnect/user/notifications.dart';
 import 'package:mechconnect/user/pickup.dart';
 import 'package:mechconnect/user/tracking.dart';
@@ -13,6 +15,8 @@ void main() {
 }
 
 class MechConnectApp extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +30,54 @@ class MechConnectApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+
+
+  String? userid;
+
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Future<void> getuser(context) async {
+    try {
+     
+
+      final response = await dio.get(
+        "$baseurl/api/user/home/$loginid",
+        
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        userid=response.data['data']['_id'];
+        print(userid);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Successful")));
+
+     
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Failed")));
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getuser(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

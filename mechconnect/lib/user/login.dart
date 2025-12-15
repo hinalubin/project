@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mechconnect/mechanic/home.dart';
 import 'package:mechconnect/mechanic/register.dart';
+import 'package:mechconnect/pickup/home.dart';
 import 'package:mechconnect/pickup/register.dart';
+import 'package:mechconnect/service/home.dart';
 import 'package:mechconnect/service/register.dart';
 import 'package:mechconnect/user/home.dart';
 import 'package:mechconnect/user/register.dart';
@@ -11,6 +14,7 @@ class Login extends StatefulWidget {
   @override
   State<Login> createState() => _LoginState();
 }
+  String? loginid;
 
 class _LoginState extends State<Login> {
   TextEditingController Username = TextEditingController();
@@ -19,29 +23,55 @@ class _LoginState extends State<Login> {
 
   final formkey = GlobalKey<FormState>();
 
+  String? role;
 
-
-   Future<void>login_api(context)async{
+  Future<void> login_api(context) async {
     try {
-      final response=await dio.post(
+      final response = await dio.post(
         '$baseurl/api/login',
-        data:{
-          
-          'password':password.text,
-          'email':Username.text,
-          
-        },
+        data: {'password': password.text, 'email': Username.text},
       );
+print(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        loginid=response.data["user"]["_id"];
+        role=response.data["user"]["role"];
 
-      if(response.statusCode==200||response.statusCode==201){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(),),);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("login successful")),);
-      }else{
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("login failed")),);
+     if (role=="user") {
+         Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      
+       
+     }
+     else if(role=="service_center"){
+         Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => homeservice()),
+        );
+     }
+     else if(role=="pickup_partner"){
+         Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Homemepickup()),
+        );
+     }
+     else if(role=="mechanic"){
+         Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Homemechanic()),
+        );
+     }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("login successful")));
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("login failed")));
       }
     } catch (e) {
       print(e);
-      
     }
   }
 

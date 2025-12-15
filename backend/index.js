@@ -7,6 +7,7 @@ import authroute from"./routes/authroute.js"
 import serviceroute from "./routes/seviceroute.js"
 import pickuproute from "./routes/pickuproute.js"
 import mechanicroute from "./routes/mechanicroute.js"
+import vehicleRoute from "./routes/vehicleRoute.js"
 const app = express()
 mongoose.connect("mongodb://localhost:27017/Mechconnect").then(
     () => { console.log("Mongo db connected successfully") }
@@ -22,4 +23,5 @@ app.use('/api/login',authroute)
 app.use('/api/service',serviceroute)
 app.use('/api/pickup',pickuproute)
 app.use('/api/mechanic',mechanicroute)
+app.use("/api/vehicle",vehicleRoute)
 app.listen(5000, "0.0.0.0", () => { console.log("server running on port 5000") })
